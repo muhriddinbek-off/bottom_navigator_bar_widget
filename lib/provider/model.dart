@@ -6,4 +6,9 @@ class ProviderModel extends ChangeNotifier {
     count++;
     notifyListeners();
   }
+
+  decrement() {
+    count--;
+    notifyListeners();
+  }
 }

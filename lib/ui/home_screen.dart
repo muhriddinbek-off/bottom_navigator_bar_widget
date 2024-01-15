@@ -3,19 +3,13 @@ import 'package:myapp/provider/model.dart';
 import 'package:myapp/ui/second_screen.dart';
 import 'package:provider/provider.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    final data = Provider.of<ProviderModel>(context);
+    int a = 1;
     return Scaffold(
-      appBar: AppBar(title: Text('Widget')),
+      appBar: AppBar(title: Text('Widget ${a++}')),
       body: Column(
         children: [
           InkWell(
@@ -58,12 +52,22 @@ class _HomeScreenState extends State<HomeScreen> {
           )
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          data.incrument();
-          setState(() {});
-        },
-        child: Icon(Icons.add),
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          FloatingActionButton(
+            onPressed: () {
+              context.read<ProviderModel>().incrument();
+            },
+            child: Icon(Icons.add),
+          ),
+          FloatingActionButton(
+            onPressed: () {
+              context.read<ProviderModel>().decrement();
+            },
+            child: Icon(Icons.remove),
+          ),
+        ],
       ),
     );
   }
