@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:myapp/data/api/api.dart';
+import 'package:myapp/provider/model.dart';
+import 'package:myapp/ui/second_screen.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -11,35 +13,58 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
+    final data = Provider.of<ProviderModel>(context);
     return Scaffold(
-      appBar: AppBar(title: Text('User')),
-      body: FutureBuilder(
-          future: ApiDate().getData(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            if (snapshot.connectionState == ConnectionState.done) {
-              return Center(
-                child: Column(
-                  children: [
-                    Text(snapshot.data!.result[0].email),
-                    Text(snapshot.data!.info.seed),
-                    Text(snapshot.data!.result[0].email),
-                  ],
+      appBar: AppBar(title: Text('Widget')),
+      body: Column(
+        children: [
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SecondScreen(color: Colors.blue, text: 'Blue'),
                 ),
               );
-            } else {
-              return Text('error');
-            }
-          }),
-      floatingActionButton: FloatingActionButton(onPressed: () {
-        setState(() {
-          ApiDate().getData();
-        });
-      }),
+            },
+            child: Container(
+              height: 100,
+              color: Colors.blue,
+            ),
+          ),
+          InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SecondScreen(color: Colors.red, text: 'Red'),
+                ),
+              );
+            },
+            child: Container(
+              height: 100,
+              color: Colors.red,
+            ),
+          ),
+          Consumer<ProviderModel>(
+            builder: (context, value, child) {
+              return Center(
+                child: Text(
+                  value.count.toString(),
+                  style: TextStyle(fontSize: 30),
+                ),
+              );
+            },
+          )
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          data.incrument();
+          setState(() {});
+        },
+        child: Icon(Icons.add),
+      ),
     );
   }
 }
