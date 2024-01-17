@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/ui/home_screen.dart';
+
+import '../model/model.dart';
 
 class PageViewScreen extends StatefulWidget {
   const PageViewScreen({super.key});
@@ -8,33 +11,91 @@ class PageViewScreen extends StatefulWidget {
 }
 
 class _PageViewScreenState extends State<PageViewScreen> {
-  PageController controller = PageController();
-  int count = 0;
+  double width = 0;
+  double heigth = 0;
+  int page = 0;
+  PageController controller = PageController(initialPage: 0);
   @override
   Widget build(BuildContext context) {
+    width = MediaQuery.of(context).size.width;
+    heigth = MediaQuery.of(context).size.height;
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Column(
         children: [
-          Text('covid 19', style: TextStyle(fontSize: 30)),
+          SafeArea(child: SizedBox()),
+          Container(
+            margin: EdgeInsets.only(top: 20),
+            alignment: Alignment.center,
+            child: Text(
+              'COVID Advices',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
+            ),
+          ),
+          SizedBox(height: heigth * 0.05),
           Expanded(
-              child: PageView.builder(
-                  onPageChanged: (value) {
-                    setState(() {});
-                    count = value;
-                  },
-                  controller: controller,
-                  itemCount: 10,
-                  itemBuilder: (context, index) {
-                    return Container(margin: EdgeInsets.all(30), color: Colors.green);
-                  })),
+            child: PageView(
+                controller: controller,
+                physics: const BouncingScrollPhysics(),
+                onPageChanged: (value) {
+                  setState(() {
+                    page = value;
+                  });
+                },
+                children: List.generate(data.length, (index) {
+                  return getOnboarding(data[index]);
+                })),
+          ),
+          SizedBox(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(10, (index) {
+              return Container(
+                margin: EdgeInsets.symmetric(horizontal: 5),
+                height: 16,
+                width: 16,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: page == index ? Colors.black : Colors.black.withOpacity(0.2),
+                ),
+              );
+            }),
+          ),
+          const SizedBox(height: 30),
           ElevatedButton(
+              style: ButtonStyle(
+                minimumSize: const MaterialStatePropertyAll(Size(56, 56)),
+                backgroundColor: const MaterialStatePropertyAll(Colors.black),
+                shape: MaterialStateProperty.all(ContinuousRectangleBorder(borderRadius: BorderRadius.circular(24))),
+              ),
               onPressed: () {
-                count++;
-                setState(() {});
+                if (page != data.length - 1) {
+                  setState(() {
+                    page++;
+                    controller.animateToPage(page, duration: const Duration(milliseconds: 400), curve: Curves.linear);
+                  });
+                } else {
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => const HomeScreen()));
+                }
               },
-              child: Text('Next')),
+              child: const Icon(Icons.navigate_next)),
+          SizedBox(height: heigth * 0.07),
         ],
       ),
+    );
+  }
+
+  getOnboarding(Models models) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Image.asset(models.image, fit: BoxFit.fill, height: heigth * 0.35),
+        Text(models.subTitle, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w500)),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          child: Text(models.title, textAlign: TextAlign.center, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
+        ),
+      ],
     );
   }
 }
