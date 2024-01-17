@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:myapp/ui/home_screen.dart';
 
@@ -13,6 +15,7 @@ class PageViewScreen extends StatefulWidget {
 class _PageViewScreenState extends State<PageViewScreen> {
   double width = 0;
   double heigth = 0;
+  double boxHeigth = 10;
   int page = 0;
   PageController controller = PageController(initialPage: 0);
   @override
@@ -49,11 +52,17 @@ class _PageViewScreenState extends State<PageViewScreen> {
           SizedBox(height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(10, (index) {
+            children: List.generate(data.length, (index) {
+              double a = data.length / data.length;
+              double b = a + data.length;
+              double c = b - (b - index);
+              double current = boxHeigth + c;
+
+              print(current);
               return Container(
                 margin: EdgeInsets.symmetric(horizontal: 5),
-                height: 16,
-                width: 16,
+                height: page == index ? boxHeigth + data.length : current,
+                width: page == index ? boxHeigth + data.length : current,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: page == index ? Colors.black : Colors.black.withOpacity(0.2),
